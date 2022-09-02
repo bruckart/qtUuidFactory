@@ -5,6 +5,7 @@
 #define MYUUIDWIDGET_H
 
 #include <QWidget>
+#include <QKeyEvent>
 
 namespace Ui
 {
@@ -28,10 +29,20 @@ public slots:
 
     void lineSelectionChanged() const;
     void listSelectionChanged() const;
+private slots:
+
+
+    void copyItem();
+    void removeItem();
+
+protected:
+
+    void keyPressEvent(QKeyEvent *event);
 
 private:
+
 
     Ui::MyUuidWidget* ui;
 };
 
-#endif // MYUUIDWIDGET_H
+#endif // MYUUIDWIDGET_H\

@@ -6,6 +6,9 @@
 
 #include <QUuid>
 #include <QListWidgetItem>
+#include <QDebug>
+#include <QMenu>
+#include <QClipBoard>
 
 #include <iostream>
 
@@ -41,6 +44,18 @@ MyUuidWidget::MyUuidWidget(QWidget* parent)
 
     ui->m_addToolButton->setEnabled(false);
     ui->m_removeToolButton->setEnabled(false);
+
+
+    // auto actInsert = new QAction("Insert", this);
+    auto actCopy   = new QAction("Copy", this);
+    auto actRemove = new QAction("Remove", this);
+
+    // connect(actInsert, SIGNAL(triggered()), this, SLOT(insertItem()));
+    connect(actCopy,   SIGNAL(triggered()), this, SLOT(copyItem()));
+    connect(actRemove, SIGNAL(triggered()), this, SLOT(removeItem()));
+
+    ui->m_listWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
+    ui->m_listWidget->addActions({ actCopy, actRemove });
 }
 
 MyUuidWidget::~MyUuidWidget()
@@ -52,7 +67,7 @@ void MyUuidWidget::generate() const
 {
     QUuid uuid = QUuid::createUuid();
     QString uuidStr = uuid.toString();
-    uuidStr = uuidStr.remove(QRegExp("[{}]"));
+    uuidStr = uuidStr.remove(QRegularExpression("[{}]"));
     uuidStr = uuidStr.toUpper();
 
     QStringList tokens = uuidStr.split(
@@ -120,5 +135,47 @@ void MyUuidWidget::listSelectionChanged() const
     else
     {
         ui->m_removeToolButton->setEnabled(false);
+    }
+}
+
+void MyUuidWidget::keyPressEvent(QKeyEvent* e)
+{
+    if(e->key() == Qt::Key_Escape)
+    {
+        switch(e->key())
+        {
+        case Qt::Key_Escape:
+            close();
+            break;
+        default:
+            QWidget::keyPressEvent(e);
+        }
+    }
+    else
+    {
+        QWidget::keyPressEvent(e);
+    }
+}
+
+void MyUuidWidget::copyItem()
+{
+    // QListWidgetItem* selectedItem = ui->m_listWidget->currentItem();
+    QList<QListWidgetItem*> items = ui->m_listWidget->selectedItems();
+    QString uuidString;
+    
+    foreach(QListWidgetItem* item, items)
+    {
+        uuidString.append(item->text() + "\n");
+    }
+    QClipboard* clipboard = QGuiApplication::clipboard();
+    clipboard->setText(uuidString);
+}
+
+void MyUuidWidget::removeItem()
+{
+    QList<QListWidgetItem*> items = ui->m_listWidget->selectedItems();
+    foreach(QListWidgetItem* item, items)
+    {
+        delete ui->m_listWidget->takeItem(ui->m_listWidget->row(item));
     }
 }

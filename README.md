@@ -5,8 +5,6 @@ This repository contains a Qt application which facilitates generating UUID's
 from Qt's QUuid class.  This application provides an interface for generating
 a UUID and then saving it to a table. 
 
-![qtUuidFactory](/assets/screenrecording.gif)
-
 # Dependencies
 The application was written in C++ (17) using Qt5. It was built using CMake 3.20.4.
 
